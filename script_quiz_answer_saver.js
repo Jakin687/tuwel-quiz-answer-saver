@@ -8,6 +8,8 @@
 // @match        https://tuwel.tuwien.ac.at/mod/quiz/view.php*
 // @match        https://tuwel.tuwien.ac.at/mod/quiz/attempt.php*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=tuwel.tuwien.ac.at
+// @update       https://raw.githubusercontent.com/Jakin687/tuwel-quiz-answer-saver/refs/heads/main/script_quiz_answer_saver.js
+// @download     https://raw.githubusercontent.com/Jakin687/tuwel-quiz-answer-saver/refs/heads/main/script_quiz_answer_saver.js
 // ==/UserScript==
 
 
