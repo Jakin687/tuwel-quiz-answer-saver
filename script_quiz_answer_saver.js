@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         TuQS by Jakin
-// @version      0.1
+// @version      0.2
 // @description  Script to save questions answered
 // @copyright    2025 Jakob Kinne, GPLv3 License
 // @require      http://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js
@@ -39,7 +39,7 @@ const AVAILABLE_TYPES = [
 
 let storage = getQuizStorage();
 let quiz_hash = md5($(".page-header-headings > h1").text());
-let question_hash = md5($(".qtext").text());
+let question_hash = getQuestionHash();
 let question_type = getQuestionType();
 let question_data = getQuestionData();
 
@@ -95,6 +95,20 @@ function getQuestionData()
 {
     if(storage[quiz_hash] === undefined) return undefined;
     return storage[quiz_hash][question_hash];
+}
+
+function getQuestionHash()
+{
+    let que = $(".qtext");
+    let img = que.find("img");
+    let qText = que.text();
+
+    if (img.length != 0)
+    {
+        qText += img.attr('src');
+    }
+
+    return md5(qText);
 }
 
 function getQuizData()
@@ -289,11 +303,6 @@ class multichoice
     }
 
     if (!isQuestionAnswerable())
-    {
-        return;
-    }
-
-    if (!AVAILABLE_TYPES.includes(question_type))
     {
         return;
     }
