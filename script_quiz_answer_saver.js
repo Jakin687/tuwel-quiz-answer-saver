@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         TuQS by Jakin
-// @version      0.1
+// @version      0.2
 // @description  Script to save questions answered
 // @copyright    2025 Jakob Kinne, GPLv3 License
 // @require      http://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js
@@ -41,9 +41,13 @@ const AVAILABLE_TYPES = [
 
 let storage = getQuizStorage();
 let quiz_hash = md5($(".page-header-headings > h1").text());
-let question_hash = md5($(".qtext").text());
+let question_hash = getQuestionHash();
 let question_type = getQuestionType();
 let question_data = getQuestionData();
+
+console.log("Question hash: " + question_hash);
+console.log("Question type: " + question_type);
+console.log("Question data: " + question_data);
 
 
 function saveStorage()
@@ -97,6 +101,23 @@ function getQuestionData()
 {
     if(storage[quiz_hash] === undefined) return undefined;
     return storage[quiz_hash][question_hash];
+}
+
+function getQuestionHash()
+{
+    let que = $(".qtext");
+    let img = que.find("img");
+    let qText = que.text();
+
+    if (img.length != 0)
+    {
+        let imgSrc = img.attr('src');
+        qText += imgSrc.substring(imgSrc.lastIndexOf("/")+1);
+    }
+
+    console.log("Question text: '" + qText + "'");
+
+    return md5(qText);
 }
 
 function getQuizData()
@@ -245,8 +266,6 @@ class multichoice
     }
 
     answer() {
-        console.log(question_hash);
-        
         this.answerElements.each(function () {
             let h = md5($(this).children().last().children().last().text());
             
@@ -291,11 +310,6 @@ class multichoice
     }
 
     if (!isQuestionAnswerable())
-    {
-        return;
-    }
-
-    if (!AVAILABLE_TYPES.includes(question_type))
     {
         return;
     }
