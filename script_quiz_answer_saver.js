@@ -45,6 +45,10 @@ let question_hash = getQuestionHash();
 let question_type = getQuestionType();
 let question_data = getQuestionData();
 
+console.log("Question hash: " + question_hash);
+console.log("Question type: " + question_type);
+console.log("Question data: " + question_data);
+
 
 function saveStorage()
 {
@@ -107,8 +111,11 @@ function getQuestionHash()
 
     if (img.length != 0)
     {
-        qText += img.attr('src');
+        let imgSrc = img.attr('src');
+        qText += imgSrc.substring(imgSrc.lastIndexOf("/")+1);
     }
+
+    console.log("Question text: '" + qText + "'");
 
     return md5(qText);
 }
@@ -259,8 +266,6 @@ class multichoice
     }
 
     answer() {
-        console.log(question_hash);
-        
         this.answerElements.each(function () {
             let h = md5($(this).children().last().children().last().text());
             
