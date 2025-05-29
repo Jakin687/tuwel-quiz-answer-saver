@@ -144,8 +144,8 @@ function addSaveAndNextBtn(controller)
         storage[quiz_hash] = quiz;
         
         saveStorage();
-        
-        //$("#mod_quiz-next-nav").click();
+
+        $("#mod_quiz-next-nav").click();
     };
 }
 
