@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         TuQS by Jakin
-// @version      0.2
+// @version      0.3
 // @description  Script to save questions answered
 // @copyright    2025 Jakob Kinne, GPLv3 License
 // @require      http://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js
@@ -11,7 +11,6 @@
 // @updateURL    https://raw.githubusercontent.com/Jakin687/tuwel-quiz-answer-saver/refs/heads/main/script_quiz_answer_saver.js
 // @downloadURL  https://raw.githubusercontent.com/Jakin687/tuwel-quiz-answer-saver/refs/heads/main/script_quiz_answer_saver.js
 // ==/UserScript==
-
 
 const LOCAL_STORAGE_KEY = "TASKey";
 
@@ -145,7 +144,7 @@ function addSaveAndNextBtn(controller)
         storage[quiz_hash] = quiz;
         
         saveStorage();
-        
+
         $("#mod_quiz-next-nav").click();
     };
 }
@@ -267,7 +266,16 @@ class multichoice
 
     answer() {
         this.answerElements.each(function () {
-            let h = md5($(this).children().last().children().last().text());
+            let aText =  $(this).children().last().children().last().text();
+
+            let img = $(this).find("img");
+            if (img.length != 0)
+            {
+                let imgSrc = img.attr('src');
+                aText += imgSrc.substring(imgSrc.lastIndexOf("/")+1);
+            }
+
+            let h = md5(aText);
             
             if (question_data.includes(h))
             {   
@@ -293,7 +301,16 @@ class multichoice
 
             if (box.is(":checked"))
             {
-                question_data.push(md5($(this).children().last().children().last().text()));
+                let aText =  $(this).children().last().children().last().text();
+
+                let img = $(this).find("img");
+                if (img.length != 0)
+                {
+                    let imgSrc = img.attr('src');
+                    aText += imgSrc.substring(imgSrc.lastIndexOf("/")+1);
+                }
+
+                question_data.push(md5(aText));
             }
         });
     }
