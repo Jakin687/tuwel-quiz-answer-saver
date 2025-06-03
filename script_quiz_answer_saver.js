@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         TuQS by Jakin
-// @version      0.3
+// @version      0.4
 // @description  Script to save questions answered
 // @copyright    2025 Jakob Kinne, GPLv3 License
 // @require      http://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js
@@ -11,6 +11,8 @@
 // @updateURL    https://raw.githubusercontent.com/Jakin687/tuwel-quiz-answer-saver/refs/heads/main/script_quiz_answer_saver.js
 // @downloadURL  https://raw.githubusercontent.com/Jakin687/tuwel-quiz-answer-saver/refs/heads/main/script_quiz_answer_saver.js
 // ==/UserScript==
+
+const VERSION = GM_info.script.version;
 
 const LOCAL_STORAGE_KEY = "TASKey";
 
@@ -197,7 +199,16 @@ function addLoadQuizBtn()
             }
         }
 
-        storage[quiz_hash] = JSON.parse(json);
+        json = JSON.parse(json);
+
+        if (json["VERSION"] != VERSION) {
+            if (!window.confirm(`The version of these answers (${(json["VERSION"] === undefined) ? "<0.4" : json["VERSION"]}) doesn't match yours (${VERSION}). Do you want to proceed anyway?`))
+            {
+                return;
+            }
+        }
+
+        storage[quiz_hash] = json;
 
         saveStorage();
     };
@@ -218,6 +229,7 @@ function addCopyQuizBtn()
     btn.onclick = () => {
         if (storage[quiz_hash] !== undefined)
         {
+            storage[quiz_hash]["VERSION"] = VERSION;
             navigator.clipboard.writeText(JSON.stringify(storage[quiz_hash]));
         }
     };
