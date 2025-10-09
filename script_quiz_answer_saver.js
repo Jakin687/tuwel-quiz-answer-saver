@@ -40,15 +40,13 @@ const AVAILABLE_TYPES = [
     QUESTION_TYPES.multiplechoice,
 ];
 
+const QUIZ_TYPE = {
+    single: "single",
+    multi: "multi"
+};
+
 let storage = getQuizStorage();
 let quiz_hash = md5($(".page-header-headings > h1").text());
-let question_hash = getQuestionHash();
-let question_type = getQuestionType();
-let question_data = getQuestionData();
-
-console.log("Question hash: " + question_hash);
-console.log("Question type: " + question_type);
-console.log("Question data: " + question_data);
 
 
 function saveStorage()
@@ -127,7 +125,7 @@ function getQuizData()
     return storage[quiz_hash];
 }
 
-function addSaveAndNextBtn(controller)
+function addSaveAndNextBtn(controller, questionId)
 {
     let btn = document.createElement("div");
     btn.classList.add("btn");
@@ -235,6 +233,11 @@ function addCopyQuizBtn()
     };
 }
 
+function getQuizType()
+{
+    return $(".que").length > 1 ? QUIZ_TYPE.multi : QUIZ_TYPE.single;
+}
+
 class truefalse
 {
     constructor () {
@@ -329,8 +332,48 @@ class multichoice
 }
 
 
+function handleSingleQuiz()
+{
+    if (!isQuestionAnswerable())
+    {
+        return;
+    }
+
+    if (!AVAILABLE_TYPES.includes(question_type))
+    {
+        return;
+    }
+
+    let question_hash = getQuestionHash();
+    let question_type = getQuestionType();
+    let question_data = getQuestionData();
+
+    console.log("Question hash: " + question_hash);
+    console.log("Question type: " + question_type);
+    console.log("Question data: " + question_data);
+
+    let controller = eval(`new ${question_type}()`);
+    controller.answer();
+
+    addSaveAndNextBtn(controller);
+}
+
+function handleMultiQuiz()
+{
+    let questionIdCounter = 0;
+
+    let questionElements = $(".que");
+    let questions = {};
+
+    for (let element of questionElements)
+    {
+        
+    }
+}
+
+
 (function () {
-    if (STATE == STATES.viewQuiz)
+    if (STATE == STATES.viewQuiz) // Menu
     {
         addCopyQuizBtn();
         addClearQuizBtn();
@@ -338,13 +381,9 @@ class multichoice
         return;
     }
 
-    if (!isQuestionAnswerable())
-    {
-        return;
-    }
+    // State = answerQuiz
 
-    let controller = eval(`new ${question_type}()`);
-    controller.answer();
+    (getQuizType() == QUIZ_TYPE.multi) ?
+        handleMultiQuiz() : handleSingleQuiz();
 
-    addSaveAndNextBtn(controller);
 })();
